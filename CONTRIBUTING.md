@@ -15,6 +15,13 @@ For a security vulnerability, follow the private-reporting guidance in
 [SECURITY.md](SECURITY.md) instead of opening a public issue with sensitive
 details.
 
+Installation, enrollment, and recovery behavior is documented in:
+
+- [docs/INSTALL.md](docs/INSTALL.md)
+- [docs/ENROLLMENT.md](docs/ENROLLMENT.md)
+- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+- [docs/BUILDING.md](docs/BUILDING.md)
+
 ## Development
 
 Use Android Studio's bundled JDK or another compatible Java 17+ runtime:

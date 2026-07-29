@@ -55,6 +55,8 @@ credential. There is intentionally no in-app reset button.
 ## Reporting a vulnerability
 
 Do not include private keys, credentials, VINs, or other secrets in an issue or
-log. Share a minimal reproduction and the affected watch, Wear OS version, and
-vehicle firmware version through a private channel chosen by the repository
-owner.
+log. Use GitHub's
+[private vulnerability report](https://github.com/jacobmr/TeslaKey/security/advisories/new)
+and share a minimal reproduction plus the affected watch, Wear OS version, and
+vehicle firmware version. If private reporting is unavailable, do not open a
+public issue containing sensitive details.

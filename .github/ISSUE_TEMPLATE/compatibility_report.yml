@@ -1,0 +1,76 @@
+name: Compatibility report
+description: Share a successful watch and vehicle combination
+title: "[Compatibility]: "
+labels:
+  - compatibility
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping document compatibility. Do not include a VIN,
+        account details, private keys, pairing codes, or identifying logs.
+  - type: input
+    id: watch
+    attributes:
+      label: Watch model
+      placeholder: Pixel Watch 2
+    validations:
+      required: true
+  - type: input
+    id: wear_os
+    attributes:
+      label: Wear OS and Android versions
+      placeholder: Wear OS 5.1, Android 14
+    validations:
+      required: true
+  - type: input
+    id: key_storage
+    attributes:
+      label: Reported key storage
+      placeholder: StrongBox or TEE
+    validations:
+      required: true
+  - type: input
+    id: vehicle
+    attributes:
+      label: Vehicle model and model year
+      placeholder: Model Y, 2024
+    validations:
+      required: true
+  - type: input
+    id: vehicle_software
+    attributes:
+      label: Vehicle software version
+      placeholder: Do not include the VIN
+    validations:
+      required: true
+  - type: input
+    id: teslakey_version
+    attributes:
+      label: TeslaKey version or commit
+      placeholder: 1.0.0 or git commit
+    validations:
+      required: true
+  - type: checkboxes
+    id: results
+    attributes:
+      label: Successful operations
+      options:
+        - label: Vehicle enrollment
+        - label: B-pillar locking
+        - label: B-pillar unlocking
+        - label: Drive authorization
+    validations:
+      required: true
+  - type: textarea
+    id: antenna
+    attributes:
+      label: Watch position or antenna notes
+      description: Describe the orientation that worked without sharing identifying information.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: I removed VINs, credentials, pairing codes, and personal data.
+          required: true

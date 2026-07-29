@@ -1,17 +1,131 @@
 # TeslaKey
 
-TeslaKey is an unofficial, local-only Wear OS NFC key-card app for compatible
-Tesla vehicles. It does not use a Tesla account, OAuth token, internet
-connection, Bluetooth connection, subscription, or backend.
+[![Android CI](https://github.com/jacobmr/TeslaKey/actions/workflows/android.yml/badge.svg)](https://github.com/jacobmr/TeslaKey/actions/workflows/android.yml)
 
-The app currently implements only Version 1: open the app and hold the watch to
-the vehicle's NFC reader. It can be enrolled as a new key using an existing
-authorized key card.
+TeslaKey is an unofficial, local-only Wear OS NFC key-card app for compatible
+Tesla vehicles. Open the app, hold the watch to the vehicle's NFC reader, and
+use it like a physical key card.
+
+It does **not** use a Tesla account, OAuth token, internet connection, Bluetooth
+connection, subscription, or backend.
 
 > **Project status:** the protocol and Android build are tested in software,
 > and successful enrollment on a physical watch and vehicle was confirmed on
 > July 29, 2026. Keep a physical key card available and verify lock, unlock, and
 > drive authorization repeatedly before relying on the watch as a primary key.
+
+## What works
+
+- Enroll the watch as an additional key using an authorized physical key card.
+- Lock and unlock at the driver's B-pillar NFC reader.
+- Authorize driving at the center-console NFC reader.
+- Keep the private P-256 credential in hardware-backed Android Keystore.
+- Require the watch to be unlocked before it answers the vehicle.
+
+TeslaKey is a manual NFC key. It does not provide passive entry, approach
+unlock, walk-away locking, remote climate control, or other internet commands.
+
+## Before you begin
+
+You need:
+
+- a Wear OS watch running Android 12 / API 31 or later;
+- NFC hardware with host card emulation (HCE);
+- hardware-backed Android Keystore support for P-256 ECDH;
+- a compatible Tesla vehicle;
+- one working, authorized Tesla key card;
+- a TeslaKey APK; and
+- either an Android phone with Wear Installer 2 or a computer with Android
+  Debug Bridge (`adb`).
+
+This repository currently publishes source code, not a signed release APK.
+Developers can build a debug APK for evaluation by following
+[Building from source](docs/BUILDING.md). Do not download TeslaKey APKs from
+untrusted mirrors.
+
+The upstream project reports successful use on Pixel Watch 2 with Wear OS 5.1
+and Galaxy Watch 6 models with Wear OS 5. This fork's direct Keystore ECDH
+implementation has completed its first successful physical enrollment; broader
+watch and vehicle testing is welcome.
+
+## Quick start
+
+### 1. Install TeslaKey on the watch
+
+The watch does not need a USB connection.
+
+- **Using the paired Android phone:** install Wear Installer 2 on the phone,
+  enable wireless debugging on the watch, pair the phone to the watch, and
+  select the TeslaKey APK as a **Custom APK**.
+- **Using a computer:** pair and connect to the watch over Wi-Fi with `adb`,
+  then run `adb install -r TeslaKey.apk`.
+
+Both methods, including every watch menu and command, are documented in
+[Installing TeslaKey](docs/INSTALL.md).
+
+### 2. Check the watch
+
+1. Open **TeslaKey** from the watch's app list.
+2. Unlock the watch if prompted.
+3. Wait for **Ready — keep this screen open**.
+4. Confirm that **Key storage** says **StrongBox** or trusted hardware
+   (**TEE**).
+
+Do not continue if the app reports unsupported NFC card emulation,
+software-only key storage, or a key-creation error.
+
+### 3. Add the watch to the car
+
+1. Park the vehicle and keep an authorized physical key card with you.
+2. On the vehicle touchscreen, open
+   **Controls → Locks → Keys → Add Key**.
+3. Keep TeslaKey open and the watch unlocked.
+4. Place the watch on the center-console NFC reader shown by the vehicle.
+5. After the vehicle recognizes the watch, scan the existing physical key card
+   to approve the new key.
+6. Rename the new entry to something clear, such as **TeslaKey Watch**.
+
+Reader location varies by model and production date. Follow the illustration on
+the vehicle screen and see [Enrolling and using the watch](docs/ENROLLMENT.md)
+for model-specific guidance and a verification checklist.
+
+### 4. Test all three operations
+
+Keep the physical card with you during testing.
+
+1. Lock the vehicle at the driver's B-pillar.
+2. Unlock it at the driver's B-pillar.
+3. Sit in the driver's seat and authorize driving at the console reader.
+
+Open TeslaKey and keep the watch unlocked for each test. Exact antenna placement
+varies by watch, so move it slowly across the reader until the vehicle responds.
+
+## Everyday use
+
+- **Lock or unlock:** open TeslaKey, keep its screen awake, and hold the watch
+  against the driver's B-pillar reader.
+- **Authorize driving:** open TeslaKey and hold the watch against the
+  center-console reader. Then press the brake within the vehicle's
+  authorization window.
+
+The app deliberately has no passive unlock mode. Version 1 is manual NFC only.
+
+## Important update and recovery rule
+
+Android only installs an app update when the new APK is signed by the same key
+as the installed APK. Updating a locally built debug APK from a different
+computer commonly fails because the signing key differs.
+
+Uninstalling TeslaKey or clearing its app data destroys the non-exportable
+Android Keystore credential. If that happens:
+
+1. remove the old TeslaKey entry from **Controls → Locks → Keys**;
+2. install the new APK;
+3. open it to create a new hardware-backed credential; and
+4. enroll the watch again.
+
+Never uninstall as a first troubleshooting step. See
+[Troubleshooting](docs/TROUBLESHOOTING.md) first.
 
 ## Security properties
 
@@ -21,85 +135,25 @@ authorized key card.
 - StrongBox is preferred when the watch supports it. Trusted Execution
   Environment (TEE) storage is the fallback.
 - The app refuses to become ready if Android reports software-only key storage.
-- "Require unlocked watch" is enabled by default.
+- **Require unlocked watch** is enabled by default.
 - App backup and device-to-device data transfer are disabled.
 - The app requests NFC permission only. It does not request internet, Bluetooth,
   location, account, or storage access.
 
-See [SECURITY.md](SECURITY.md) and
-[docs/CRYPTOGRAPHY.md](docs/CRYPTOGRAPHY.md) for the threat model and protocol
+Read [SECURITY.md](SECURITY.md) and
+[the cryptography notes](docs/CRYPTOGRAPHY.md) for the threat model and protocol
 audit.
 
-## Requirements
+## Documentation
 
-- Wear OS watch running Android 12 / API 31 or later
-- NFC hardware with host card emulation (HCE)
-- Hardware-backed Android Keystore support for P-256 ECDH
-- A compatible Tesla vehicle and one existing authorized key card
-- Android platform tools (`adb`) for sideloading
-
-The upstream project reports successful use on Pixel Watch 2 with Wear OS 5.1
-and Galaxy Watch 6 models with Wear OS 5. This fork's direct Keystore ECDH
-implementation has completed its first successful physical enrollment; broader
-watch and vehicle testing is welcome.
-
-## Build
-
-This checkout uses the Gradle wrapper, Android Gradle Plugin 8.9.3, Java 17
-source compatibility, and Android SDK 35.
-
-On this Mac, Android Studio's bundled JDK can run the build:
-
-```bash
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-./gradlew testDebugUnitTest assembleDebug
-```
-
-The resulting debug APK is:
-
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-Android's debug build is signed automatically and can be sideloaded for device
-testing:
-
-```bash
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-```
-
-For long-term use, create a dedicated release signing key outside this
-repository and keep it backed up. Losing or changing the app signature requires
-uninstalling the old app, which deletes the enrolled watch credential. No
-release keystore or password belongs in Git.
-
-## Enroll
-
-1. Install TeslaKey on the watch.
-2. Open it once. Confirm the screen says **Ready** and reports StrongBox or
-   trusted hardware (TEE).
-3. In the parked vehicle, open **Controls → Locks** and start adding a key.
-4. With TeslaKey open, place the watch against the console NFC reader.
-5. Confirm the new credential using an existing authorized Tesla key card.
-6. Give the new key a recognizable name in the vehicle.
-
-Exact reader placement varies by watch. Move the watch slowly and try the side
-or face nearest its NFC antenna.
-
-## Use
-
-- **Lock or unlock:** open TeslaKey, keep the screen awake, and hold the watch
-  against the driver's B-pillar reader.
-- **Authorize driving:** open TeslaKey and hold the watch against the console
-  reader.
-
-The app deliberately has no passive unlock mode. Version 1 is manual NFC only.
-
-## Recovery and removal
-
-Clearing app data or uninstalling TeslaKey destroys the Android Keystore
-credential. It cannot be recovered from a backup. Remove the corresponding stale
-key from the vehicle's Locks screen, then reinstall and enroll a new credential.
+- [Install from an Android phone or computer](docs/INSTALL.md)
+- [Enroll, test, and use the watch](docs/ENROLLMENT.md)
+- [Troubleshooting and recovery](docs/TROUBLESHOOTING.md)
+- [Build and sign from source](docs/BUILDING.md)
+- [Security model](SECURITY.md)
+- [Cryptography and protocol audit](docs/CRYPTOGRAPHY.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Contributing](CONTRIBUTING.md)
 
 ## Origin and license
 
@@ -117,5 +171,5 @@ marks belong to their respective owner.
 
 Bug reports, device compatibility results, protocol review, and focused pull
 requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting
-changes. Never include VINs, private keys, credentials, or identifying vehicle
-logs in a public issue.
+changes. Never include VINs, private keys, credentials, pairing codes, or
+identifying vehicle logs in a public issue.

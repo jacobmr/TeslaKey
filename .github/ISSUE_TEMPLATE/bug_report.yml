@@ -1,0 +1,100 @@
+name: Bug report
+description: Report an installation, enrollment, or operation problem
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep a physical key card available while testing. Do not include a VIN,
+        account details, private keys, pairing codes, or identifying vehicle logs.
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Failure stage
+      options:
+        - Build
+        - Install or update
+        - App startup
+        - Vehicle enrollment
+        - B-pillar lock or unlock
+        - Drive authorization
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: watch
+    attributes:
+      label: Watch model
+      placeholder: Pixel Watch 2
+    validations:
+      required: true
+  - type: input
+    id: wear_os
+    attributes:
+      label: Wear OS and Android versions
+      placeholder: Wear OS 5.1, Android 14
+    validations:
+      required: true
+  - type: input
+    id: vehicle
+    attributes:
+      label: Vehicle model and model year
+      placeholder: Model Y, 2024
+    validations:
+      required: true
+  - type: input
+    id: vehicle_software
+    attributes:
+      label: Vehicle software version
+      placeholder: Do not include the VIN
+    validations:
+      required: true
+  - type: input
+    id: teslakey_version
+    attributes:
+      label: TeslaKey version or commit
+      placeholder: 1.0.0 or git commit
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Describe exactly what you did and what the watch and vehicle displayed.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: physical_card
+    attributes:
+      label: Does the physical key card work at the same reader?
+      options:
+        - "Yes"
+        - "No"
+        - Not tested
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety checks
+      options:
+        - label: I kept an authorized physical key card available.
+          required: true
+        - label: I removed VINs, credentials, pairing codes, and personal data.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
